@@ -1,0 +1,16 @@
+{
+  "name": "todo-mvc",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Tim Huddle <blazhen88@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "postinstall": "cd ember-todo && yarn && cd ../react-todo && yarn && cd ../vue-todo && yarn && cd .."
+  },
+  "standard": {
+    "parser": "babel-eslint",
+    "env": ["jest"],
+    "globals": ["fetch"]
+  }
+}
