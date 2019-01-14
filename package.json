@@ -6,11 +6,19 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "postinstall": "cd ember-todo && yarn && cd ../react-todo && yarn && cd ../vue-todo && yarn && cd .."
+    "postinstall": "cd ember-todo && yarn && cd ../react-todo && yarn && cd ../vue-todo && yarn",
+    "react": "cd react-todo && yarn start",
+    "ember": "cd ember-todo && ember s",
+    "vue": "cd vue-todo && yarn serve"
   },
   "standard": {
     "parser": "babel-eslint",
-    "env": ["jest"],
-    "globals": ["fetch"]
-  }
+    "env": [
+      "jest"
+    ],
+    "globals": [
+      "fetch"
+    ]
+  },
+  "dependencies": {}
 }
