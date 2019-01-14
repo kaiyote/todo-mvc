@@ -21,4 +21,4 @@ module.exports = function (defaults) {
   // along with the exports of each module as its value.
 
   return app.toTree()
-};
+}

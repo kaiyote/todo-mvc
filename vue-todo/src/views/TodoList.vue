@@ -69,7 +69,6 @@ export default {
 }
 </script>
 
-
 <style lang="scss" scoped>
 .section {
   position: relative;

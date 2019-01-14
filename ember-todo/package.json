@@ -13,10 +13,11 @@
   "scripts": {
     "build": "ember build",
     "lint:hbs": "ember-template-lint .",
-    "start": "ember serve"
+    "lint:js": "eslint .",
+    "start": "ember serve",
+    "test": "ember test"
   },
   "devDependencies": {
-    "@ember/jquery": "^0.5.2",
     "@ember/optional-features": "^0.6.3",
     "broccoli-asset-rev": "^2.7.0",
     "ember-ajax": "^3.1.0",
@@ -43,6 +44,6 @@
     "qunit-dom": "^0.8.0"
   },
   "engines": {
-    "node": ">= 11.*"
+    "node": "6.* || 8.* || >= 10.*"
   }
 }

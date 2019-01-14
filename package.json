@@ -14,7 +14,8 @@
   "standard": {
     "parser": "babel-eslint",
     "env": [
-      "jest"
+      "jest",
+      "node"
     ],
     "globals": [
       "fetch"
