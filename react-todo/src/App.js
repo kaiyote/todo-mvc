@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Component, Fragment } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import styled, { createGlobalStyle } from 'styled-components'
 import TodoList from './TodoList'
@@ -94,83 +94,102 @@ const NewTodo = styled.input`
   -moz-osx-font-smoothing: grayscaled;
 `
 
-const toggleAll = setTodos => (e, todos) => {
-  setTodos(todos.map(x => { x.completed = e.target.checked; return x }))
-}
+export default class App extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      todos: [],
+      editing: null,
+      newTodo: ''
+    }
+  }
 
-const clearCompleted = (todos, setTodos) => () => {
-  setTodos(todos.filter(x => !x.completed))
-}
+  get activeCount () {
+    return this.state.todos.filter(x => !x.completed).length
+  }
 
-const toggle = (todos, setTodos) => id => {
-  setTodos(todos.map(t => { t.completed = t.id === id ? !t.completed : t.completed; return t }))
-}
+  get completedCount () {
+    return this.state.todos.filter(x => x.completed).length
+  }
 
-const destroy = (todos, setTodos) => id => {
-  setTodos(todos.filter(x => x.id !== id))
-}
+  render () {
+    const { todos, editing, newTodo } = this.state
+    return <Fragment>
+      <GlobalStyle />
+      <Router>
+        <TodoApp>
+          <header>
+            <h1>todos</h1>
+            <NewTodo placeholder='What needs to be done?' autoFocus value={newTodo} onChange={e => this.setState({ newTodo: e.target.value })} onKeyDown={e => this.makeNewTodo(e)} />
+          </header>
+          <Route path='/' render={({ location }) => <TodoList
+            todos={todos}
+            editing={editing}
+            toggleAll={e => this.toggleAll(e)}
+            show={location.pathname}
+            toggle={this.toggle}
+            destroy={this.destroy}
+            edit={this.edit}
+            save={this.save}
+            cancel={_ => this.cancel()} />} />
+          <Footer count={this.activeCount} completedCount={this.completedCount} clear={_ => this.clearCompleted()} />
+        </TodoApp>
+      </Router>
+    </Fragment>
+  }
 
-const edit = (setEditing) => id => {
-  setEditing(id)
-}
+  makeNewTodo (event) {
+    if (event.which !== 13) return // enter
+    event.preventDefault()
 
-const cancel = (setEditing) => () => {
-  setEditing(null)
-}
+    const oldTodos = Array.from(this.state.todos)
+    const newTodoText = this.state.newTodo.trim()
 
-const save = (todos, setTodos, setEditing) => (id, text) => {
-  setTodos(todos.map(x => { x.title = x.id === id ? text : x.text; return x }))
-  setEditing(null)
-}
+    if (newTodoText) {
+      this.setState({
+        newTodo: '',
+        todos: oldTodos.concat({
+          id: Math.max(...oldTodos.map(x => x.id), 0) + 1,
+          completed: false,
+          title: newTodoText
+        })
+      })
+    }
+  }
 
-const createTodo = (todos, setTodos, setNewTodo) => (event, text) => {
-  if (event.which !== 13) return // enter
+  clearCompleted () {
+    this.setState({ todos: this.state.todos.filter(x => !x.completed) })
+  }
 
-  event.preventDefault()
+  toggleAll (event) {
+    this.setState({ todos: this.state.todos.map(x => { x.completed = event.target.checked; return x }) })
+  }
+  get toggle () {
+    return (id) => {
+      this.setState({ todos: this.state.todos.map(x => { x.completed = x.id === id ? !x.completed : x.completed; return x }) })
+    }
+  }
+  get edit () {
+    return (id) => {
+      this.setState({ editing: id })
+    }
+  }
 
-  const newTodoText = text.trim()
-  if (newTodoText) {
-    setNewTodo('')
-    const newTodos = Array.from(todos)
-    newTodos.push({
-      id: Math.max(...todos.map(x => x.id), 0) + 1,
-      completed: false,
-      title: newTodoText
-    })
-    setTodos(newTodos)
+  get destroy () {
+    return (id) => {
+      this.setState({ todos: this.state.todos.filter(x => x.id !== id) })
+      this.cancel()
+    }
+  }
+
+  get save () {
+    return (id, text) => {
+      this.setState({ todos: this.state.todos.map(x => { x.title = x.id === id ? text : x.title; return x }) })
+      this.cancel()
+    }
+  }
+
+  cancel () {
+    this.setState({ editing: null })
   }
 }
-
-const App = () => {
-  const [todos, setTodos] = useState([])
-  const [editing, setEditing] = useState(null)
-  const [newTodo, setNewTodo] = useState('')
-  const active = todos.filter(x => !x.completed).length
-  const completed = todos.filter(x => x.completed).length
-  const makeNewTodo = createTodo(todos, setTodos, setNewTodo)
-
-  return <Fragment>
-    <GlobalStyle />
-    <Router>
-      <TodoApp>
-        <header>
-          <h1>todos</h1>
-          <NewTodo placeholder='What needs to be done?' autoFocus value={newTodo} onChange={e => setNewTodo(e.target.value)} onKeyDown={e => makeNewTodo(e, newTodo)} />
-        </header>
-        <Route path='/' render={({ location }) => <TodoList
-          todos={todos}
-          editing={editing}
-          toggleAll={toggleAll(setTodos)}
-          show={location.pathname}
-          toggle={toggle(todos, setTodos)}
-          destroy={destroy(todos, setTodos)}
-          edit={edit(setEditing)}
-          save={save(todos, setTodos, setEditing)}
-          cancel={cancel(setEditing)} />} />
-        <Footer count={active} completedCount={completed} clear={clearCompleted(todos, setTodos)} />
-      </TodoApp>
-    </Router>
-  </Fragment>
-}
-
-export default App

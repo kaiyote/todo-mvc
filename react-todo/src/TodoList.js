@@ -61,7 +61,7 @@ const TodoList = ({ todos, editing, toggleAll, show, toggle, destroy, edit, save
       <Toggle id='toggle-all' type='checkbox' checked={activeTodoCount === 0} onChange={e => toggleAll(e, todos)} />
       <label htmlFor='toggle-all' />
       <Todos>
-        {shownTodos.map(t => <TodoItem key={t.id} todo={t} editing={editing === t.id} onToggle={toggle} onDestroy={destroy} onEdit={edit} onSave={save} onCancel={cancel} />)}
+        {shownTodos.map(t => <TodoItem key={t.id} todo={t} editing={editing === t.id} toggle={toggle} destroy={destroy} edit={edit} save={save} cancel={cancel} />)}
       </Todos>
     </Section>
 }

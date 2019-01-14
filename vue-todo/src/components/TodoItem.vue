@@ -1,8 +1,79 @@
-import React, { Component } from 'react'
-import styled from 'styled-components'
-import PropTypes from 'prop-types'
+<template>
+  <li class="todo" :class="{completed: todo.completed}">
+    <input v-if="editing" v-model="editText" class="todoEdit" @blur="preSave()" @keyup.escape="keyUp(true)" @keyup.enter="keyUp(false)" />
+    <div v-else>
+      <input type="checkbox" class="toggle" :checked="todo.completed" @change="toggle(todo.id)">
+      <label @dblclick="edit(todo.id)">{{todo.title}}</label>
+      <button class="todoDestroy" @click="destroy(todo.id)"></button>
+    </div>
+  </li>
+</template>
 
-const TodoLi = styled.li`
+<script>
+export default {
+  name: 'todoItem',
+  props: {
+    todo: {
+      type: Object,
+      required: true
+    },
+    editing: {
+      type: Boolean,
+      required: true
+    },
+    edit: {
+      type: Function,
+      required: true
+    },
+    destroy: {
+      type: Function,
+      required: true
+    },
+    toggle: {
+      type: Function,
+      required: true
+    },
+    save: {
+      type: Function,
+      required: true
+    },
+    cancel: {
+      type: Function,
+      required: true
+    }
+  },
+  data () {
+    return {
+      editText: ''
+    }
+  },
+  methods: {
+    preSave () {
+      const val = this.editText.trim()
+      if (val) {
+        this.save(this.todo.id, val)
+      } else {
+        this.destroy(this.todo.id)
+      }
+    },
+    keyUp (isCancel) {
+      if (isCancel) {
+        this.editText = this.todo.title
+        this.cancel(this.todo.id)
+      } else {
+        this.preSave(this.todo.id, this.editText)
+      }
+    }
+  },
+  created () {
+    this.editText = this.todo.title
+  }
+}
+</script>
+
+
+<style lang="scss" scoped>
+.todo {
   position: relative;
   font-size: 24px;
   border-bottom: 1px solid #ededed;
@@ -32,16 +103,16 @@ const TodoLi = styled.li`
     color: #d9d9d9;
     text-decoration: line-through;
   }
-`
+}
 
-const TodoEdit = styled.input`
+.todoEdit {
   display: block;
   width: 506px;
   padding: 12px 16px;
   margin: 0 0 0 43px;
-`
+}
 
-const DestroyTodo = styled.button`
+.todoDestroy {
   display: none;
   position: absolute;
   top: 0;
@@ -66,9 +137,9 @@ const DestroyTodo = styled.button`
   li:hover & {
     display: block;
   }
-`
+}
 
-const Toggle = styled.input`
+.toggle {
   text-align: center;
   width: 40px;
   /* auto, since non-WebKit browsers doesn't support input styling */
@@ -91,66 +162,5 @@ const Toggle = styled.input`
   &:checked + label {
     background-image: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23bddad5%22%20stroke-width%3D%223%22/%3E%3Cpath%20fill%3D%22%235dc2af%22%20d%3D%22M72%2025L42%2071%2027%2056l-4%204%2020%2020%2034-52z%22/%3E%3C/svg%3E');
   }
-`
-
-export default class TodoItem extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      editText: props.todo.title
-    }
-  }
-
-  static propTypes = {
-    todo: PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      completed: PropTypes.bool.isRequired,
-      title: PropTypes.string.isRequired
-    }).isRequired,
-    editing: PropTypes.bool.isRequired,
-    toggle: PropTypes.func.isRequired,
-    destroy: PropTypes.func.isRequired,
-    save: PropTypes.func.isRequired,
-    edit: PropTypes.func.isRequired,
-    cancel: PropTypes.func.isRequired
-  }
-
-  render () {
-    const { editText } = this.state
-    const { todo, editing, toggle, destroy, edit } = this.props
-
-    return (
-      <TodoLi className={`${(todo.completed ? 'completed' : null)}`}>
-        {
-          editing
-            ? <TodoEdit value={editText} onBlur={_ => this.preSave()} onChange={e => this.setState({ editText: e.target.value })} onKeyDown={e => this.keyDown(e)} />
-            : <div>
-              <Toggle type='checkbox' checked={todo.completed} onChange={_ => toggle(todo.id)} />
-              <label onDoubleClick={_ => edit(todo.id)}>{todo.title}</label>
-              <DestroyTodo onClick={_ => destroy(todo.id)} />
-            </div>
-        }
-      </TodoLi>
-    )
-  }
-
-  preSave () {
-    const { save, destroy, todo } = this.props
-    const val = this.state.editText.trim()
-    if (val) {
-      save(todo.id, val)
-    } else {
-      destroy(todo.id)
-    }
-  }
-
-  keyDown (event) {
-    const { todo, cancel } = this.props
-    if (event.which === 27) { // escape
-      this.setState({ editText: todo.title })
-      cancel()
-    } else if (event.which === 13) { // enter
-      this.preSave()
-    }
-  }
 }
+</style>

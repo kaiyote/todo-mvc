@@ -1,9 +1,42 @@
-import React from 'react'
-import styled from 'styled-components'
-import { Link } from 'react-router-dom'
-import PropTypes from 'prop-types'
+<template>
+  <footer class="footer" v-if="count || completedCount">
+    <span class="todoCount"><strong>{{count}}</strong> {{pluralize(count, 'item')}} left</span>
+    <ul class="filters">
+      <li class="filter"><router-link to='/'>All</router-link></li>
+      <li class="filter"><router-link to='/active'>Active</router-link></li>
+      <li class="filter"><router-link to='/completed'>Completed</router-link></li>
+    </ul>
+    <button v-if="completedCount > 0" class="clearButton" @click="clear">Clear Completed</button>
+  </footer>
+</template>
 
-const StyledFooter = styled.footer`
+<script>
+export default {
+  name: 'todoFooter',
+  props: {
+    count: {
+      type: Number,
+      required: true
+    },
+    completedCount: {
+      type: Number,
+      required: true
+    },
+    clear: {
+      type: Function,
+      required: true
+    }
+  },
+  methods: {
+    pluralize (count, word) {
+      return count === 1 ? word : word + 's'
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.footer {
   color: #777;
   padding: 10px 15px;
   height: 20px;
@@ -24,27 +57,27 @@ const StyledFooter = styled.footer`
                 0 16px 0 -6px #f6f6f6,
                 0 17px 2px -6px rgba(0, 0, 0, 0.2);
   }
-`
+}
 
-const TodoCount = styled.span`
+.todoCount {
   float: left;
   text-align: left;
 
   & strong {
     font-weight: 300;
   }
-`
+}
 
-const Filters = styled.ul`
+.filters {
   margin: 0;
   padding: 0;
   list-style: none;
   position: absolute;
   right: 0;
   left: 0;
-`
+}
 
-const Filter = styled.li`
+.filter {
   display: inline;
 
   & a {
@@ -63,9 +96,9 @@ const Filter = styled.li`
       border-color: rgba(175, 47, 47, 0.2);
     }
   }
-`
+}
 
-const ClearButton = styled.button`
+.clearButton {
   float: right;
   position: relative;
   line-height: 20px;
@@ -75,31 +108,5 @@ const ClearButton = styled.button`
   &:hover {
     text-decoration: underline;
   }
-`
-
-const pluralize = (count, word) => count === 1 ? word : word + 's'
-
-const Footer = ({ count, completedCount, clear }) => {
-  return count || completedCount
-    ? <StyledFooter>
-      <TodoCount><strong>{count}</strong> {pluralize(count, 'item')} left</TodoCount>
-      <Filters>
-        <Filter><Link to='/'>All</Link></Filter>
-        <Filter><Link to='/active'>Active</Link></Filter>
-        <Filter><Link to='/completed'>Completed</Link></Filter>
-      </Filters>
-      {completedCount === 0
-        ? null
-        : <ClearButton onClick={clear}>Clear completed</ClearButton>
-      }
-    </StyledFooter>
-    : null
 }
-
-Footer.propTypes = {
-  count: PropTypes.number.isRequired,
-  completedCount: PropTypes.number.isRequired,
-  clear: PropTypes.func.isRequired
-}
-
-export default Footer
+</style>
