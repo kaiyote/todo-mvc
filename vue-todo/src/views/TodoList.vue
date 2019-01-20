@@ -1,71 +1,38 @@
 <template>
   <section class="section">
-    <input class="toggle" id='toggle-all' type='checkbox' @change="toggleAll" :checked="isToggled" />
+    <input class="toggle" id='toggle-all' type='checkbox' @change="event => toggleAll(event.target.checked)" :checked="isToggled" />
     <label for='toggle-all' />
     <ul class="todos">
-      <TodoItem v-for="todo in todosToShow" :key="todo.id" :todo="todo" :editing="editing === todo.id" :edit="edit" :destroy="destroy" :toggle="toggle" :save="save" :cancel="cancel" />
+      <TodoItem v-for="todo in todosToShow" :key="todo.id" :todo="todo" />
     </ul>
   </section>
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
 import TodoItem from '@/components/TodoItem.vue'
+import { VisibilityFilters } from '@/store/visibilityFilter'
 
 export default {
   name: 'todoList',
   components: {
     TodoItem
   },
-  props: {
-    toggleAll: {
-      type: Function,
-      required: true
+  computed: mapState({
+    isToggled (state) {
+      return state.todos.filter(x => !x.completed).length === 0
     },
-    location: {
-      type: String,
-      required: true
-    },
-    todos: {
-      type: Array,
-      required: true
-    },
-    editing: {
-      type: Number,
-      required: false
-    },
-    edit: {
-      type: Function,
-      required: true
-    },
-    destroy: {
-      type: Function,
-      required: true
-    },
-    toggle: {
-      type: Function,
-      required: true
-    },
-    save: {
-      type: Function,
-      required: true
-    },
-    cancel: {
-      type: Function,
-      required: true
+    todosToShow (state) {
+      return state.visibilityFilter === VisibilityFilters.SHOW_COMPLETED
+        ? state.todos.filter(x => x.completed)
+        : state.visibilityFilter === VisibilityFilters.SHOW_ACTIVE
+          ? state.todos.filter(x => !x.completed)
+          : state.todos
     }
-  },
-  computed: {
-    isToggled () {
-      return this.todos.filter(x => !x.completed).length === 0
-    },
-    todosToShow () {
-      return this.location === '/completed'
-        ? this.todos.filter(x => x.completed)
-        : this.location === '/active'
-          ? this.todos.filter(x => !x.completed)
-          : this.todos
-    }
-  }
+  }),
+  methods: mapMutations([
+    'toggleAll'
+  ])
 }
 </script>
 

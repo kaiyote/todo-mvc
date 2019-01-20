@@ -2,43 +2,21 @@
   <li class="todo" :class="{completed: todo.completed}">
     <input v-if="editing" v-model="editText" class="todoEdit" @blur="preSave()" @keyup.escape="keyUp(true)" @keyup.enter="keyUp(false)" />
     <div v-else>
-      <input type="checkbox" class="toggle" :checked="todo.completed" @change="toggle(todo.id)">
-      <label @dblclick="edit(todo.id)">{{todo.title}}</label>
-      <button class="todoDestroy" @click="destroy(todo.id)"></button>
+      <input type="checkbox" class="toggle" :checked="todo.completed" @change="toggleTodo(todo.id)">
+      <label @dblclick="edit(todo.id)">{{todo.text}}</label>
+      <button class="todoDestroy" @click="deleteTodo(todo.id)"></button>
     </div>
   </li>
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
+
 export default {
   name: 'todoItem',
   props: {
     todo: {
       type: Object,
-      required: true
-    },
-    editing: {
-      type: Boolean,
-      required: true
-    },
-    edit: {
-      type: Function,
-      required: true
-    },
-    destroy: {
-      type: Function,
-      required: true
-    },
-    toggle: {
-      type: Function,
-      required: true
-    },
-    save: {
-      type: Function,
-      required: true
-    },
-    cancel: {
-      type: Function,
       required: true
     }
   },
@@ -47,26 +25,38 @@ export default {
       editText: ''
     }
   },
+  computed: mapState({
+    editing (state) {
+      return state.editing === this.todo.id
+    }
+  }),
   methods: {
     preSave () {
       const val = this.editText.trim()
       if (val) {
-        this.save(this.todo.id, val)
+        this.saveTodo({ index: this.todo.id, text: val })
       } else {
-        this.destroy(this.todo.id)
+        this.deleteTodo(this.todo.id)
       }
     },
     keyUp (isCancel) {
       if (isCancel) {
-        this.editText = this.todo.title
-        this.cancel(this.todo.id)
+        this.editText = this.todo.text
+        this.cancel()
       } else {
-        this.preSave(this.todo.id, this.editText)
+        this.preSave()
       }
-    }
+    },
+    ...mapMutations([
+      'toggleTodo',
+      'deleteTodo',
+      'saveTodo',
+      'edit',
+      'cancel'
+    ])
   },
   created () {
-    this.editText = this.todo.title
+    this.editText = this.todo.text
   }
 }
 </script>

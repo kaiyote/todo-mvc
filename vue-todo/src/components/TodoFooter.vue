@@ -1,36 +1,41 @@
 <template>
-  <footer class="footer" v-if="count || completedCount">
-    <span class="todoCount"><strong>{{count}}</strong> {{pluralize(count, 'item')}} left</span>
+  <footer class="footer" v-if="active || completed">
+    <span class="todoCount"><strong>{{active}}</strong> {{pluralize(active, 'item')}} left</span>
     <ul class="filters">
-      <li class="filter"><router-link to='/'>All</router-link></li>
-      <li class="filter"><router-link to='/active'>Active</router-link></li>
-      <li class="filter"><router-link to='/completed'>Completed</router-link></li>
+      <li class="filter"><FilterLink :filterType='SHOW_ALL'>All</FilterLink></li>
+      <li class="filter"><FilterLink :filterType='SHOW_ACTIVE'>Active</FilterLink></li>
+      <li class="filter"><FilterLink :filterType='SHOW_COMPLETED'>Completed</FilterLink></li>
     </ul>
-    <button v-if="completedCount > 0" class="clearButton" @click="clear">Clear Completed</button>
+    <button v-if="completed > 0" class="clearButton" @click="clearCompleted">Clear Completed</button>
   </footer>
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
+import FilterLink from '@/components/FilterLink.vue'
+import { VisibilityFilters } from '@/store/visibilityFilter'
+
 export default {
   name: 'todoFooter',
-  props: {
-    count: {
-      type: Number,
-      required: true
-    },
-    completedCount: {
-      type: Number,
-      required: true
-    },
-    clear: {
-      type: Function,
-      required: true
-    }
+  components: {
+    FilterLink
+  },
+  computed: {
+    SHOW_ALL: () => VisibilityFilters.SHOW_ALL,
+    SHOW_COMPLETED: () => VisibilityFilters.SHOW_COMPLETED,
+    SHOW_ACTIVE: () => VisibilityFilters.SHOW_ACTIVE,
+    ...mapState({
+      active: state => state.todos.filter(x => !x.completed).length,
+      completed: state => state.todos.filter(x => x.completed).length
+    })
   },
   methods: {
     pluralize (count, word) {
       return count === 1 ? word : word + 's'
-    }
+    },
+    ...mapMutations([
+      'clearCompleted'
+    ])
   }
 }
 </script>
@@ -80,21 +85,23 @@ export default {
 .filter {
   display: inline;
 
-  & a {
+  & a,
+  & span {
     color: inherit;
     margin: 3px;
     padding: 3px 7px;
     text-decoration: none;
     border: 1px solid transparent;
     border-radius: 3px;
+    cursor: pointer;
 
     &:hover {
       border-color: rgba(175, 47, 47, 0.1);
     }
+  }
 
-    &.selected {
-      border-color: rgba(175, 47, 47, 0.2);
-    }
+  & span {
+    border-color: rgba(175, 47, 47, 0.2);
   }
 }
 

@@ -2,73 +2,32 @@
   <div class="todoApp">
     <header>
       <h1>todos</h1>
-      <input class="newTodo" autofocus v-model="newTodo" @keyup.enter.prevent="makeNewTodo" placeholder="What needs to be done?" />
+      <input class="newTodo" autofocus v-model="newTodo" @keyup.enter.prevent="addTodo(newTodo); newTodo = ''" placeholder="What needs to be done?" />
     </header>
-    <router-view :todos="todos" :toggle-all="toggleAll" :toggle="toggle" :edit="edit" :destroy="destroy" :editing="editing" :save="save" :cancel="cancel" />
-    <TodoFooter :count="activeCount" :completed-count="completedCount" :clear="clearCompleted" />
+    <TodoList />
+    <TodoFooter />
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import TodoFooter from '@/components/TodoFooter.vue'
+import TodoList from '@/views/TodoList.vue'
 
 export default {
   name: 'app',
   components: {
-    TodoFooter
+    TodoFooter,
+    TodoList
   },
   data () {
     return {
-      todos: [],
-      editing: null,
       newTodo: ''
     }
   },
-  computed: {
-    activeCount () {
-      return this.todos.filter(x => !x.completed).length
-    },
-    completedCount () {
-      return this.todos.filter(x => x.completed).length
-    }
-  },
-  methods: {
-    makeNewTodo () {
-      const newTodoText = this.newTodo.trim()
-      if (newTodoText) {
-        this.newTodo = ''
-
-        this.todos.push({
-          id: Math.max(...this.todos.map(x => x.id), 0) + 1,
-          completed: false,
-          title: newTodoText
-        })
-      }
-    },
-    clearCompleted () {
-      this.todos = this.todos.filter(x => !x.completed)
-    },
-    toggleAll (event) {
-      this.todos = this.todos.map(x => { x.completed = event.target.checked; return x })
-    },
-    toggle (id) {
-      this.todos = this.todos.map(x => { x.completed = x.id === id ? !x.completed : x.completed; return x })
-    },
-    edit (id) {
-      this.editing = id
-    },
-    destroy (id) {
-      this.todos = this.todos.filter(x => x.id !== id)
-      this.cancel()
-    },
-    save (id, text) {
-      this.todos = this.todos.map(x => { x.title = x.id === id ? text : x.title; return x })
-      this.cancel()
-    },
-    cancel () {
-      this.editing = null
-    }
-  }
+  methods: mapMutations([
+    'addTodo'
+  ])
 }
 </script>
 

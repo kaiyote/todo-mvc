@@ -7,15 +7,10 @@ const Link = ({ active, children, onClick }) => {
   }
 
   return (
-    <a
-      href='_blank'
-      onClick={e => {
-        e.preventDefault()
-        onClick()
-      }}
-    >
-      {children}
-    </a>
+    <a href='_blank' onClick={e => {
+      e.preventDefault()
+      onClick()
+    }}>{children}</a>
   )
 }
 
