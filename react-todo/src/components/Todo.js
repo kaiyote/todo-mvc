@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import styled from 'styled-components'
+import React from 'react'
 import PropTypes from 'prop-types'
+import styled from 'styled-components'
 
 const TodoLi = styled.li`
   position: relative;
@@ -93,64 +93,51 @@ const Toggle = styled.input`
   }
 `
 
-export default class TodoItem extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      editText: props.todo.title
-    }
-  }
-
-  static propTypes = {
-    todo: PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      completed: PropTypes.bool.isRequired,
-      title: PropTypes.string.isRequired
-    }).isRequired,
-    editing: PropTypes.bool.isRequired,
-    toggle: PropTypes.func.isRequired,
-    destroy: PropTypes.func.isRequired,
-    save: PropTypes.func.isRequired,
-    edit: PropTypes.func.isRequired,
-    cancel: PropTypes.func.isRequired
-  }
-
-  render () {
-    const { editText } = this.state
-    const { todo, editing, toggle, destroy, edit } = this.props
-
-    return (
-      <TodoLi className={`${(todo.completed ? 'completed' : null)}`}>
-        {
-          editing
-            ? <TodoEdit value={editText} onBlur={_ => this.preSave()} onChange={e => this.setState({ editText: e.target.value })} onKeyDown={e => this.keyDown(e)} />
-            : <div>
-              <Toggle type='checkbox' checked={todo.completed} onChange={_ => toggle(todo.id)} />
-              <label onDoubleClick={_ => edit(todo.id)}>{todo.title}</label>
-              <DestroyTodo onClick={_ => destroy(todo.id)} />
-            </div>
-        }
-      </TodoLi>
-    )
-  }
-
-  preSave () {
-    const { save, destroy, todo } = this.props
-    const val = this.state.editText.trim()
-    if (val) {
-      save(todo.id, val)
-    } else {
-      destroy(todo.id)
-    }
-  }
-
-  keyDown (event) {
-    const { todo, cancel } = this.props
-    if (event.which === 27) { // escape
-      this.setState({ editText: todo.title })
-      cancel()
-    } else if (event.which === 13) { // enter
-      this.preSave()
-    }
+const save = (onTodoDestroy, onTodoCancel, onTodoSave) => event => {
+  const val = event.target.value.trim()
+  if (!val) {
+    onTodoCancel()
+    onTodoDestroy()
+  } else {
+    onTodoSave(val)
   }
 }
+
+const keyDown = (onTodoCancel, appliedSave) => event => {
+  if (event.which === 27) { // escape
+    onTodoCancel()
+  } else if (event.which === 13) { // enter
+    appliedSave(event)
+  }
+}
+
+const Todo = ({ editing, completed, text, onTodoToggle, onTodoEdit, onTodoCancel, onTodoSave, onTodoDestroy }) => {
+  const appliedSave = save(onTodoDestroy, onTodoCancel, onTodoSave)
+
+  return (
+    <TodoLi className={`${(completed ? 'completed' : null)}`}>
+      {
+        editing
+          ? <TodoEdit defaultValue={text} onBlur={appliedSave} onKeyDown={keyDown(onTodoCancel, appliedSave)} />
+          : <div>
+            <Toggle type='checkbox' checked={completed} onChange={onTodoToggle} />
+            <label onDoubleClick={onTodoEdit}>{text}</label>
+            <DestroyTodo onClick={onTodoDestroy} />
+          </div>
+      }
+    </TodoLi>
+  )
+}
+
+Todo.propTypes = {
+  editing: PropTypes.bool.isRequired,
+  completed: PropTypes.bool.isRequired,
+  text: PropTypes.string.isRequired,
+  onTodoCancel: PropTypes.func.isRequired,
+  onTodoToggle: PropTypes.func.isRequired,
+  onTodoEdit: PropTypes.func.isRequired,
+  onTodoSave: PropTypes.func.isRequired,
+  onTodoDestroy: PropTypes.func.isRequired
+}
+
+export default Todo
