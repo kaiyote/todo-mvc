@@ -6,8 +6,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "postinstall": "cd ../react-todo && yarn && cd ../vue-todo && yarn",
-    "react": "cd react-todo && yarn start",
+    "postinstall": "cd react-todo && yarn && cd ../vue-todo && yarn",
+    "react": "cd react-todo && cross-env BROWSER=none yarn start",
     "vue": "cd vue-todo && yarn serve"
   },
   "standard": {
@@ -20,5 +20,7 @@
       "fetch"
     ]
   },
-  "dependencies": {}
+  "devDependencies": {
+    "cross-env": "^5.2.0"
+  }
 }
