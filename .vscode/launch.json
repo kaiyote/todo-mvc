@@ -1,13 +1,25 @@
 {
   "version": "0.1.0",
   "configurations": [
-      {
-          "name": "Attach to react app",
-          "type": "chrome",
-          "request": "attach",
-          "port": 9222,
-          "url": "http://localhost:3000",
-          "webRoot": "${workspaceFolder}/react-todo"
-      }
+    {
+        "name": "React",
+        "type": "chrome",
+        "request": "launch",
+        "runtimeArgs": ["--remote-debugging-port=9222"],
+        "port": 9222,
+        "url": "http://localhost:3000",
+        "webRoot": "${workspaceFolder}/react-todo",
+        "preLaunchTask": "react"
+    },
+    {
+        "name": "Vue",
+        "type": "chrome",
+        "request": "launch",
+        "runtimeArgs": ["--remote-debugging-port=9222"],
+        "port": 9222,
+        "url": "http://localhost:8080",
+        "webRoot": "${workspaceFolder}/vue-todo",
+        "preLaunchTask": "vue"
+    }
   ]
 }
