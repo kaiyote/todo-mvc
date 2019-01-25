@@ -8,7 +8,6 @@
   "scripts": {
     "postinstall": "cd ember-todo && yarn && cd ../react-todo && yarn && cd ../vue-todo && yarn",
     "react": "cd react-todo && yarn start",
-    "ember": "cd ember-todo && ember s",
     "vue": "cd vue-todo && yarn serve"
   },
   "standard": {
