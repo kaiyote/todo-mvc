@@ -4,30 +4,13 @@ tmp
 build
 
 # dependencies
-bower_components
 node_modules
-.pnp
-.pnp.js
 
 # misc
 .DS_Store
 .env*
 connect.lock
 coverage
-libpeerconnection.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# ember-try
-.node_modules.ember-try
-bower.json.ember-try
-package.json.ember-try
-
-# Editor directories and files
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw*
