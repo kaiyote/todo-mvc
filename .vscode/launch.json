@@ -22,6 +22,17 @@
         "webRoot": "${workspaceFolder}/vue-todo",
         "preLaunchTask": "vue",
         "postDebugTask": "kill-vue"
-    }
+    },
+    {
+      "name": "Preact",
+      "type": "chrome",
+      "request": "launch",
+      "runtimeArgs": ["--remote-debugging-port=9222"],
+      "port": 9222,
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}/preact-todo",
+      "preLaunchTask": "preact",
+      "postDebugTask": "kill-vue"
+  }
   ]
 }

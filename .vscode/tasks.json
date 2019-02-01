@@ -54,6 +54,31 @@
       }
     },
     {
+      "label": "preact",
+      "type": "npm",
+      "script": "preact",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "custom",
+        "pattern": {
+          "regexp": "_____"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "building modules$",
+          "endsPattern": "Compiled successfully!"
+        }
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      }
+    },
+    {
       "label": "kill-react",
       "type": "npm",
       "script": "kill-react",

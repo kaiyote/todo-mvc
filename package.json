@@ -8,6 +8,7 @@
   "scripts": {
     "postinstall": "cd react-todo && yarn && cd ../vue-todo && yarn",
     "react": "cd react-todo && cross-env BROWSER=none yarn start",
+    "preact": "cd preact-todo && cross-env BROWSER=none yarn start",
     "vue": "cd vue-todo && yarn serve",
     "kill-react": "fkill -f :3000",
     "kill-vue": "fkill -f :8080"
