@@ -1,0 +1,17 @@
+{
+  "name": "mithril-todo",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "mithril": "^2.0.0-rc.4"
+  },
+  "devDependencies": {
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.0"
+  },
+  "scripts": {
+    "start": "webpack src/index.js --output bin/app.js -d --watch"
+  }
+}
