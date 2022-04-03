@@ -24,7 +24,7 @@ export class TodoList extends connect(store)(LitElement) {
   render () {
     return when(this.todos.length > 0, () => html`
       <section>
-        <input id='toggle-all' type='checkbox' ?checked=${this.activeTodos === 0} @change=${this.toggleAll} />
+        <input id='toggle-all' type='checkbox' .checked=${this.activeTodos === 0} @change=${this.toggleAll} />
         <label for='toggle-all'></label>
         <ul>
           ${repeat(this.todos, t => t.id, t => html`<todo-item index=${t.id} text=${t.text} ?completed=${t.completed} ?editing=${t.id === this.editing}></todo-item>`)}

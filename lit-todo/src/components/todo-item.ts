@@ -31,7 +31,7 @@ export class TodoItem extends LitElement {
           () => html`<input class='edit' value=${this.text} @blur=${this.save} @keydown=${this.editKeyDown} />`,
           () => html`
             <div>
-              <input class='toggle' type='checkbox' ?checked=${this.completed} @change=${this.toggle} />
+              <input class='toggle' type='checkbox' .checked=${this.completed} @change=${this.toggle} />
               <label @dblclick=${this.edit}>${this.text}</label>
               <button @click=${this.destroy}></button>
             </div>
