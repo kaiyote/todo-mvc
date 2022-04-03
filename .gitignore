@@ -12,3 +12,6 @@ node_modules
 connect.lock
 coverage
 *.log*
+
+# junk
+*-old
